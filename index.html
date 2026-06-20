@@ -1,0 +1,1959 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Static prototype for a candidate-side job-search copilot that helps users save jobs, find original application pages, evaluate fit, tailor resumes, and review safe form suggestions."
+    />
+    <title>Job Search Copilot Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600&amp;family=Newsreader:wght@500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          const savedTheme = localStorage.getItem("jobGenieTheme");
+          document.documentElement.dataset.theme = savedTheme === "light" ? "light" : "dark";
+        } catch (error) {
+          document.documentElement.dataset.theme = "dark";
+        }
+      })();
+    </script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --background: #13131b;
+        --surface: #171720;
+        --surface-low: #1b1b23;
+        --surface-mid: #1f1f27;
+        --surface-high: #2a2932;
+        --surface-highest: #34343d;
+        --paper: #fbfbfa;
+        --text: #e4e1ed;
+        --text-muted: #c7c4d7;
+        --text-faint: #918fa0;
+        --border: #464554;
+        --border-soft: rgba(199, 196, 215, 0.14);
+        --primary: #c2c1ff;
+        --primary-strong: #5e5ce6;
+        --primary-ink: #1800a7;
+        --primary-hover: #d7d5ff;
+        --accent: #d97757;
+        --accent-soft: #ffb59e;
+        --success: #81c784;
+        --warning: #ffd54f;
+        --danger: #e57373;
+        --info: #64b5f6;
+        --shadow: 0 18px 60px rgba(0, 0, 0, 0.32);
+        --soft-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+        --sidebar-bg: rgba(27, 27, 35, 0.94);
+        --topbar-bg: rgba(19, 19, 27, 0.82);
+        --hero-card-bg: rgba(27, 27, 35, 0.82);
+        --window-bar-bg: rgba(31, 31, 39, 0.86);
+        --brand-mark-bg: rgba(94, 92, 230, 0.18);
+        --brand-mark-border: rgba(194, 193, 255, 0.26);
+        --subtle-fill: rgba(255, 255, 255, 0.025);
+        --subtle-fill-strong: rgba(255, 255, 255, 0.04);
+        --grid-line: rgba(255, 255, 255, 0.025);
+        --button-shadow: 0 0 0 4px rgba(194, 193, 255, 0.12);
+        --button-shadow-soft: 0 0 0 4px rgba(194, 193, 255, 0.08);
+        --phone-bg: #101016;
+        --form-panel-bg: rgba(23, 23, 32, 0.96);
+        --gradient-tint: rgba(94, 92, 230, 0.08);
+        --radius-sm: 6px;
+        --radius: 8px;
+        --radius-lg: 12px;
+        --sidebar: 272px;
+      }
+
+      html[data-theme="dark"] {
+        color-scheme: dark;
+      }
+
+      html[data-theme="light"] {
+        color-scheme: light;
+        --background: #fcf8ff;
+        --surface: #fcf8ff;
+        --surface-low: #f5f2fe;
+        --surface-mid: #f0ecf8;
+        --surface-high: #eae6f2;
+        --surface-highest: #e4e1ed;
+        --paper: #fbfbfa;
+        --text: #1b1b23;
+        --text-muted: #464554;
+        --text-faint: #777586;
+        --border: #c7c4d7;
+        --border-soft: rgba(119, 117, 134, 0.24);
+        --primary: #4441cc;
+        --primary-strong: #5e5ce6;
+        --primary-ink: #ffffff;
+        --primary-hover: #332dbc;
+        --accent: #d97757;
+        --accent-soft: #99462a;
+        --success: #2e7d32;
+        --warning: #8a5b00;
+        --danger: #ba1a1a;
+        --info: #1565c0;
+        --shadow: 0 18px 54px rgba(48, 47, 56, 0.14);
+        --soft-shadow: 0 12px 32px rgba(48, 47, 56, 0.1);
+        --sidebar-bg: rgba(245, 242, 254, 0.94);
+        --topbar-bg: rgba(252, 248, 255, 0.86);
+        --hero-card-bg: rgba(255, 255, 255, 0.88);
+        --window-bar-bg: rgba(240, 236, 248, 0.9);
+        --brand-mark-bg: rgba(94, 92, 230, 0.12);
+        --brand-mark-border: rgba(68, 65, 204, 0.22);
+        --subtle-fill: rgba(68, 65, 204, 0.04);
+        --subtle-fill-strong: rgba(68, 65, 204, 0.08);
+        --grid-line: rgba(70, 69, 84, 0.08);
+        --button-shadow: 0 0 0 4px rgba(68, 65, 204, 0.14);
+        --button-shadow-soft: 0 0 0 4px rgba(68, 65, 204, 0.08);
+        --phone-bg: #ffffff;
+        --form-panel-bg: rgba(255, 255, 255, 0.96);
+        --gradient-tint: rgba(94, 92, 230, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(180deg, var(--gradient-tint), transparent 320px),
+          var(--background);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+        letter-spacing: 0;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .material-symbols-outlined {
+        font-size: 20px;
+        line-height: 1;
+        font-variation-settings: "FILL" 0, "wght" 430, "GRAD" 0, "opsz" 24;
+      }
+
+      .filled {
+        font-variation-settings: "FILL" 1, "wght" 430, "GRAD" 0, "opsz" 24;
+      }
+
+      .shell {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: var(--sidebar) minmax(0, 1fr);
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        padding: 24px 16px;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 8px 18px;
+        border-bottom: 1px solid var(--border-soft);
+      }
+
+      .brand-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius);
+        display: grid;
+        place-items: center;
+        color: var(--primary);
+        background: var(--brand-mark-bg);
+        border: 1px solid var(--brand-mark-border);
+      }
+
+      .brand-title {
+        display: block;
+        font-family: Newsreader, serif;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+
+      .brand-subtitle,
+      .eyebrow,
+      .metric-label,
+      .chip,
+      .nav-link,
+      .button,
+      .tiny {
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0;
+      }
+
+      .brand-subtitle {
+        display: block;
+        margin-top: 4px;
+        color: var(--text-faint);
+        font-size: 11px;
+      }
+
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 40px;
+        padding: 9px 12px;
+        color: var(--text-muted);
+        border-radius: var(--radius);
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+      }
+
+      .nav-link:hover,
+      .nav-link.is-active {
+        color: var(--primary);
+        background: rgba(194, 193, 255, 0.1);
+      }
+
+      .nav-link:active {
+        transform: scale(0.98);
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 14px 12px 0;
+        border-top: 1px solid var(--border-soft);
+        color: var(--text-faint);
+        font-size: 13px;
+      }
+
+      .main {
+        min-width: 0;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        height: 68px;
+        padding: 0 32px;
+        background: var(--topbar-bg);
+        backdrop-filter: blur(18px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .mobile-brand {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        font-family: Newsreader, serif;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .topbar-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .topbar-links a {
+        padding: 8px 10px;
+        color: var(--text-muted);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+      }
+
+      .topbar-links a:hover {
+        color: var(--text);
+        background: var(--surface-high);
+      }
+
+      .container {
+        width: min(1320px, calc(100% - 64px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        min-height: calc(100vh - 68px);
+        display: grid;
+        grid-template-columns: minmax(320px, 0.92fr) minmax(460px, 1.4fr);
+        gap: 28px;
+        align-items: center;
+        padding: 38px 0 28px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        font-family: Newsreader, Georgia, serif;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        max-width: 720px;
+        font-size: clamp(42px, 7vw, 76px);
+        line-height: 0.95;
+        font-weight: 700;
+      }
+
+      h2 {
+        font-size: clamp(30px, 4vw, 48px);
+        line-height: 1.05;
+      }
+
+      h3 {
+        font-size: 24px;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .lead {
+        max-width: 640px;
+        margin-top: 20px;
+        color: var(--text-muted);
+        font-size: 18px;
+        line-height: 1.65;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+        color: var(--accent-soft);
+        font-size: 13px;
+      }
+
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 26px;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        min-height: 42px;
+        border: 0;
+        border-radius: var(--radius);
+        padding: 10px 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        transition:
+          transform 160ms ease,
+          background 160ms ease,
+          border-color 160ms ease,
+          color 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .button:focus-visible,
+      .nav-link:focus-visible,
+      .topbar-links a:focus-visible,
+      .tab-button:focus-visible,
+      .workflow-item:focus-visible,
+      .icon-button:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 3px;
+      }
+
+      .button:active {
+        transform: scale(0.98);
+      }
+
+      .button.primary {
+        color: var(--primary-ink);
+        background: var(--primary);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      }
+
+      .button.primary:hover {
+        background: var(--primary-hover);
+        box-shadow: var(--button-shadow);
+      }
+
+      .button.secondary {
+        color: var(--text);
+        background: var(--surface-high);
+        border: 1px solid var(--border);
+      }
+
+      .button.secondary:hover {
+        border-color: rgba(194, 193, 255, 0.48);
+        box-shadow: var(--button-shadow-soft);
+      }
+
+      .button.ghost {
+        color: var(--text-muted);
+        background: transparent;
+        border: 1px solid var(--border);
+      }
+
+      .button.ghost:hover {
+        color: var(--text);
+        background: var(--subtle-fill-strong);
+      }
+
+      .start-card {
+        margin-top: 22px;
+        padding: 16px;
+        border: 1px solid rgba(194, 193, 255, 0.28);
+        border-radius: var(--radius-lg);
+        background: rgba(194, 193, 255, 0.08);
+      }
+
+      .start-card ol {
+        display: grid;
+        gap: 10px;
+        margin: 12px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .start-card li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .section-cta {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 18px;
+      }
+
+      .trust-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 22px;
+        color: var(--text-faint);
+        font-size: 14px;
+      }
+
+      .hero-card {
+        min-width: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--hero-card-bg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .window-bar {
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--window-bar-bg);
+      }
+
+      .window-dots {
+        display: flex;
+        gap: 7px;
+      }
+
+      .window-dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--surface-highest);
+        border: 1px solid var(--border);
+      }
+
+      .window-title {
+        color: var(--text-faint);
+        font-size: 12px;
+      }
+
+      .app-preview {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 16px;
+        padding: 18px;
+      }
+
+      .panel,
+      .compact-panel,
+      .demo-panel,
+      .trust-card,
+      .workflow-item {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface-low);
+      }
+
+      .panel {
+        padding: 18px;
+      }
+
+      .compact-panel {
+        padding: 14px;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      .muted {
+        color: var(--text-muted);
+      }
+
+      .faint {
+        color: var(--text-faint);
+      }
+
+      .tiny {
+        font-size: 12px;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        min-height: 26px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        background: var(--subtle-fill-strong);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .chip.success {
+        color: var(--success);
+        border-color: rgba(129, 199, 132, 0.3);
+        background: rgba(129, 199, 132, 0.08);
+      }
+
+      .chip.warning {
+        color: var(--warning);
+        border-color: rgba(255, 213, 79, 0.28);
+        background: rgba(255, 213, 79, 0.08);
+      }
+
+      .chip.info {
+        color: var(--info);
+        border-color: rgba(100, 181, 246, 0.3);
+        background: rgba(100, 181, 246, 0.08);
+      }
+
+      .chip.danger {
+        color: var(--danger);
+        border-color: rgba(229, 115, 115, 0.3);
+        background: rgba(229, 115, 115, 0.08);
+      }
+
+      .progress-list,
+      .evidence-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .progress-list li,
+      .evidence-list li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .step-dot {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        color: var(--primary-ink);
+        background: var(--primary);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .score {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin: 8px 0 10px;
+      }
+
+      .score strong {
+        font-family: Newsreader, serif;
+        font-size: 58px;
+        line-height: 1;
+      }
+
+      .score span {
+        color: var(--text-faint);
+        font-size: 18px;
+      }
+
+      .section {
+        padding: 78px 0;
+        border-top: 1px solid var(--border-soft);
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+
+      .section-head p {
+        max-width: 620px;
+        color: var(--text-muted);
+      }
+
+      .workflow-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .workflow-item {
+        min-height: 154px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      }
+
+      .workflow-item:hover {
+        transform: translateY(-2px);
+        border-color: rgba(194, 193, 255, 0.46);
+        background: var(--surface-mid);
+        box-shadow: var(--soft-shadow);
+      }
+
+      .workflow-item .material-symbols-outlined {
+        color: var(--primary);
+      }
+
+      .workflow-item h3 {
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+
+      .workflow-item p {
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .action-hint {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        color: var(--primary);
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+      }
+
+      .demo-layout {
+        display: grid;
+        grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+        gap: 18px;
+      }
+
+      .demo-panel {
+        padding: 18px;
+      }
+
+      .tabs {
+        display: grid;
+        gap: 8px;
+      }
+
+      .tab-button {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text-muted);
+        background: transparent;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+        cursor: pointer;
+        transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+      }
+
+      .tab-button:hover,
+      .tab-button[aria-selected="true"] {
+        color: var(--text);
+        background: var(--surface-high);
+        border-color: rgba(194, 193, 255, 0.38);
+      }
+
+      .tab-button:hover {
+        transform: translateX(2px);
+      }
+
+      .tab-button[aria-selected="true"] .material-symbols-outlined {
+        color: var(--primary);
+      }
+
+      .tab-pane {
+        display: none;
+      }
+
+      .tab-pane.is-active {
+        display: block;
+      }
+
+      .job-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border-soft);
+        margin-bottom: 18px;
+      }
+
+      .job-title {
+        margin-top: 6px;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .stat {
+        padding: 12px;
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius);
+        background: var(--subtle-fill);
+      }
+
+      .stat strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 18px;
+      }
+
+      .source-result,
+      .suggestion-card,
+      .resume-line,
+      .privacy-row {
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius);
+        background: var(--subtle-fill);
+      }
+
+      .source-result {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px;
+        align-items: center;
+      }
+
+      .reason-list {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .reason-list span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .callout {
+        display: flex;
+        gap: 12px;
+        padding: 14px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(255, 213, 79, 0.28);
+        background: rgba(255, 213, 79, 0.08);
+        color: var(--text-muted);
+      }
+
+      .callout strong {
+        color: var(--warning);
+      }
+
+      .resume-preview {
+        color: #1b1b23;
+        background: var(--paper);
+        border-radius: var(--radius);
+        padding: 18px;
+        min-height: 265px;
+      }
+
+      .resume-preview h4 {
+        margin: 0 0 8px;
+        font-family: Newsreader, serif;
+        font-size: 23px;
+      }
+
+      .resume-preview p,
+      .resume-preview li {
+        color: #3b3a42;
+        font-size: 13px;
+      }
+
+      .resume-preview ul {
+        margin: 10px 0 0;
+        padding-left: 18px;
+      }
+
+      .resume-line {
+        padding: 12px;
+      }
+
+      .timeline {
+        display: grid;
+        gap: 12px;
+      }
+
+      .timeline-row {
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .extension-layout {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.8fr) minmax(360px, 1.2fr);
+        gap: 18px;
+        align-items: start;
+      }
+
+      .phone {
+        max-width: 410px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--phone-bg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .phone-head,
+      .phone-foot {
+        padding: 14px 16px;
+        background: var(--surface-low);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .phone-foot {
+        border-top: 1px solid var(--border);
+        border-bottom: 0;
+        color: var(--text-faint);
+        font-size: 12px;
+      }
+
+      .phone-body {
+        padding: 16px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .browser-mock {
+        min-height: 560px;
+        position: relative;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background:
+          linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+          linear-gradient(var(--grid-line) 1px, transparent 1px),
+          var(--surface-low);
+        background-size: 24px 24px;
+        overflow: hidden;
+      }
+
+      .form-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(420px, 100%);
+        background: var(--form-panel-bg);
+        border-left: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-panel header {
+        padding: 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .form-list {
+        padding: 14px;
+        display: grid;
+        gap: 12px;
+        overflow: auto;
+      }
+
+      .suggestion-card {
+        position: relative;
+        padding: 14px;
+        overflow: hidden;
+      }
+
+      .suggestion-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--success);
+      }
+
+      .suggestion-card.medium::before {
+        background: var(--warning);
+      }
+
+      .suggestion-card.blocked::before {
+        background: var(--danger);
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border-soft);
+      }
+
+      .icon-button {
+        min-width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .icon-button:hover {
+        color: var(--text);
+        background: var(--surface-high);
+      }
+
+      .trust-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .trust-card {
+        padding: 18px;
+      }
+
+      .trust-card .material-symbols-outlined {
+        color: var(--primary);
+        margin-bottom: 14px;
+      }
+
+      .trust-card h3 {
+        margin-bottom: 8px;
+        font-size: 22px;
+      }
+
+      .trust-card p {
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .feedback {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: center;
+        padding: 28px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface-low);
+      }
+
+      .feedback-stack {
+        display: grid;
+        gap: 18px;
+      }
+
+      .feedback-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .feedback-embed {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface-low);
+        overflow: hidden;
+      }
+
+      .form-placeholder {
+        display: grid;
+        gap: 12px;
+        place-items: center;
+        min-height: 260px;
+        padding: 28px;
+        text-align: center;
+        color: var(--text-muted);
+        background:
+          linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+          linear-gradient(var(--grid-line) 1px, transparent 1px),
+          var(--subtle-fill);
+        background-size: 24px 24px;
+      }
+
+      .form-placeholder strong {
+        display: block;
+        color: var(--text);
+        font-size: 18px;
+      }
+
+      .feedback-iframe {
+        display: none;
+        width: 100%;
+        height: 2998px;
+        border: 0;
+        background: var(--surface);
+      }
+
+      .feedback-embed.has-form .feedback-iframe {
+        display: block;
+      }
+
+      .feedback-embed.has-form .form-placeholder {
+        display: none;
+      }
+
+      .status-text {
+        min-height: 22px;
+        margin-top: 12px;
+        color: var(--success);
+        font-size: 14px;
+      }
+
+      .footer {
+        padding: 28px 0 42px;
+        color: var(--text-faint);
+        border-top: 1px solid var(--border-soft);
+        font-size: 13px;
+      }
+
+      .skip-link {
+        position: absolute;
+        left: 16px;
+        top: -60px;
+        z-index: 100;
+        background: var(--primary);
+        color: var(--primary-ink);
+        padding: 10px 12px;
+        border-radius: var(--radius);
+      }
+
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      @media (max-width: 1120px) {
+        .hero,
+        .extension-layout,
+        .demo-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .workflow-grid,
+        .trust-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .app-preview {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 820px) {
+        .shell {
+          display: block;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .topbar {
+          height: auto;
+          min-height: 64px;
+          padding: 12px 16px;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .mobile-brand {
+          display: flex;
+        }
+
+        .topbar-links {
+          width: 100%;
+          overflow-x: auto;
+          flex-wrap: nowrap;
+          padding-bottom: 2px;
+        }
+
+        .topbar-links a {
+          white-space: nowrap;
+        }
+
+        .container {
+          width: min(100% - 32px, 1320px);
+        }
+
+        .hero {
+          min-height: auto;
+          padding: 34px 0 28px;
+        }
+
+        .section {
+          padding: 54px 0;
+        }
+
+        .section-head,
+        .job-header,
+        .source-result,
+        .feedback {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .stat-grid,
+        .two-col,
+        .workflow-grid,
+        .trust-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-actions,
+        .section-cta,
+        .card-actions,
+        .feedback-buttons {
+          align-items: stretch;
+          justify-content: stretch;
+        }
+
+        .hero-actions .button,
+        .section-cta .button,
+        .feedback-buttons .button,
+        .card-actions .button {
+          flex: 1 1 auto;
+        }
+
+        .browser-mock {
+          min-height: 620px;
+        }
+
+        .form-panel {
+          width: 100%;
+        }
+
+        h1 {
+          font-size: clamp(40px, 14vw, 56px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to prototype</a>
+    <div class="shell">
+      <aside class="sidebar" aria-label="Prototype navigation">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <span class="material-symbols-outlined filled">work</span>
+          </div>
+          <div>
+            <span class="brand-title">Job Search Copilot</span>
+            <span class="brand-subtitle">Precision career assistant</span>
+          </div>
+        </div>
+        <nav class="nav">
+          <a class="nav-link is-active" href="#concept"><span class="material-symbols-outlined">dashboard</span>Concept</a>
+          <a class="nav-link" href="#workflow"><span class="material-symbols-outlined">route</span>Workflow</a>
+          <a class="nav-link" href="#hub"><span class="material-symbols-outlined">bookmark</span>Job Hub</a>
+          <a class="nav-link" href="#extension"><span class="material-symbols-outlined">extension</span>Extension</a>
+          <a class="nav-link" href="#trust"><span class="material-symbols-outlined">shield_lock</span>Trust</a>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="chip success"><span class="material-symbols-outlined">verified_user</span>User controlled</div>
+          <p style="margin-top: 12px;">Nothing is submitted automatically. Every application step stays visible and reversible.</p>
+          <button class="button ghost js-theme-toggle" type="button" aria-pressed="false" style="width: 100%; margin-top: 14px;">
+            <span class="material-symbols-outlined">light_mode</span>
+            <span class="theme-toggle-label">Light Mode</span>
+          </button>
+          <a class="button secondary feedback-link js-feedback-link" href="#feedback" style="width: 100%; margin-top: 14px;">
+            <span class="material-symbols-outlined">forum</span>
+            Leave Feedback
+          </a>
+        </div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <a class="mobile-brand" href="#concept" aria-label="Job Search Copilot home">
+            <span class="material-symbols-outlined filled">work</span>
+            <span>Job Search Copilot</span>
+          </a>
+          <nav class="topbar-links" aria-label="Page sections">
+            <a href="#concept">Concept</a>
+            <a href="#workflow">How it helps</a>
+            <a href="#hub">Job hub</a>
+            <a href="#extension">Extension</a>
+            <a href="#trust">Privacy</a>
+          </nav>
+          <button class="button ghost js-theme-toggle" type="button" aria-pressed="false">
+            <span class="material-symbols-outlined">light_mode</span>
+            <span class="theme-toggle-label">Light Mode</span>
+          </button>
+          <a class="button secondary feedback-link js-feedback-link" href="#feedback">
+            <span class="material-symbols-outlined">forum</span>
+            Leave Feedback
+          </a>
+        </header>
+
+        <main id="main">
+          <section id="concept" class="container hero" aria-labelledby="hero-title">
+            <div>
+              <div class="eyebrow">
+                <span class="material-symbols-outlined">auto_awesome</span>
+                Candidate-side job-search copilot
+              </div>
+              <h1 id="hero-title">Prepare better applications without giving up control.</h1>
+              <p class="lead">
+                Save a job, find the original application page, evaluate your evidence-backed fit, tailor a resume, and review safe form suggestions before you apply manually.
+              </p>
+              <div class="hero-actions">
+                <a class="button primary" href="#hub">
+                  <span class="material-symbols-outlined">play_arrow</span>
+                  Start Test
+                </a>
+                <a class="button secondary feedback-link js-feedback-link" href="#feedback">
+                  <span class="material-symbols-outlined">forum</span>
+                  Leave Feedback
+                </a>
+                <a class="button secondary" href="#trust">
+                  <span class="material-symbols-outlined">shield</span>
+                  Review trust model
+                </a>
+              </div>
+              <div class="start-card" aria-label="Suggested test path">
+                <div class="chip info"><span class="material-symbols-outlined">ads_click</span>Start here</div>
+                <ol>
+                  <li><span class="step-dot">1</span>Press <strong>Start Test</strong> to jump into the Job Hub.</li>
+                  <li><span class="step-dot">2</span>Try each tab and primary action button.</li>
+                  <li><span class="step-dot">3</span>Use <strong>Leave Feedback</strong> when something feels unclear.</li>
+                </ol>
+              </div>
+              <div class="trust-line">
+                <span class="material-symbols-outlined">lock</span>
+                GDPR-first, suggestion-first, and no LinkedIn Easy Apply automation.
+              </div>
+            </div>
+
+            <div class="hero-card" aria-label="Preview of the Job Search Copilot app">
+              <div class="window-bar">
+                <div class="window-dots" aria-hidden="true"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></div>
+                <div class="window-title">Saved Jobs / Senior Product Designer</div>
+                <span class="material-symbols-outlined" aria-hidden="true">more_horiz</span>
+              </div>
+              <div class="app-preview">
+                <article class="panel">
+                  <div class="panel-head">
+                    <div>
+                      <div class="chip info"><span class="material-symbols-outlined">link</span>LinkedIn reference</div>
+                      <h3 class="job-title">Senior Product Designer</h3>
+                      <p class="muted">Acme Health - Berlin or remote EU</p>
+                    </div>
+                    <div class="chip success">Saved</div>
+                  </div>
+                  <ul class="progress-list" aria-label="Application preparation steps">
+                    <li><span class="step-dot">1</span>Job saved with 91% extraction confidence</li>
+                    <li><span class="step-dot">2</span>Original Lever application page confirmed</li>
+                    <li><span class="step-dot">3</span>Fit evaluation found 82/100 evidence match</li>
+                    <li><span class="step-dot">4</span>Resume tailored with 3 truthfulness notes</li>
+                    <li><span class="step-dot">5</span>Application tracked as preparing</li>
+                  </ul>
+                </article>
+                <aside class="compact-panel">
+                  <div class="chip warning"><span class="material-symbols-outlined">warning</span>Boundary</div>
+                  <p style="margin-top: 12px; color: var(--text-muted);">
+                    Easy Apply is not automated. Copilot helps find the direct company or ATS page instead.
+                  </p>
+                  <div class="score" aria-label="Fit score 82 out of 100">
+                    <strong>82</strong><span>/100</span>
+                  </div>
+                  <p class="tiny faint">Application ROI score, not a hiring prediction.</p>
+                </aside>
+              </div>
+            </div>
+          </section>
+
+          <section id="workflow" class="section" aria-labelledby="workflow-title">
+            <div class="container">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow"><span class="material-symbols-outlined">route</span>How it helps</div>
+                  <h2 id="workflow-title">One controlled workflow from job discovery to application prep.</h2>
+                </div>
+                <p>Each step creates a useful artifact and asks for confirmation before using sensitive career data or browser context.</p>
+              </div>
+              <div class="workflow-grid">
+                <a class="workflow-item" href="#hub" aria-label="Try saved jobs in the Job Hub">
+                  <span class="material-symbols-outlined">bookmark</span>
+                  <div>
+                    <h3>Save jobs</h3>
+                    <p>Capture roles from ATS pages, LinkedIn reference pages, or manual paste.</p>
+                    <span class="action-hint">Try this <span class="material-symbols-outlined">arrow_forward</span></span>
+                  </div>
+                </a>
+                <a class="workflow-item" href="#hub" aria-label="Try source finding in the Job Hub">
+                  <span class="material-symbols-outlined">travel_explore</span>
+                  <div>
+                    <h3>Find source</h3>
+                    <p>Confirm the likely company or ATS application page before using it downstream.</p>
+                    <span class="action-hint">Try this <span class="material-symbols-outlined">arrow_forward</span></span>
+                  </div>
+                </a>
+                <a class="workflow-item" href="#hub" aria-label="Try fit evaluation in the Job Hub">
+                  <span class="material-symbols-outlined">fact_check</span>
+                  <div>
+                    <h3>Evaluate fit</h3>
+                    <p>See strengths, gaps, and risks tied to career-map evidence.</p>
+                    <span class="action-hint">Try this <span class="material-symbols-outlined">arrow_forward</span></span>
+                  </div>
+                </a>
+                <a class="workflow-item" href="#hub" aria-label="Try resume tailoring in the Job Hub">
+                  <span class="material-symbols-outlined">auto_fix_high</span>
+                  <div>
+                    <h3>Tailor resume</h3>
+                    <p>Generate DOCX/PDF-ready content with a change log and truthfulness warnings.</p>
+                    <span class="action-hint">Try this <span class="material-symbols-outlined">arrow_forward</span></span>
+                  </div>
+                </a>
+                <a class="workflow-item" href="#extension" aria-label="Try application form suggestions in the extension demo">
+                  <span class="material-symbols-outlined">edit_note</span>
+                  <div>
+                    <h3>Suggest answers</h3>
+                    <p>Review field-level suggestions. Suggestions stay under your control.</p>
+                    <span class="action-hint">Try this <span class="material-symbols-outlined">arrow_forward</span></span>
+                  </div>
+                </a>
+              </div>
+              <div class="section-cta">
+                <a class="button primary" href="#hub">
+                  <span class="material-symbols-outlined">ads_click</span>
+                  Try Job Hub
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section id="hub" class="section" aria-labelledby="hub-title">
+            <div class="container">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow"><span class="material-symbols-outlined">hub</span>Interactive job detail hub</div>
+                  <h2 id="hub-title">Save - Source - Fit - Tailor - Track.</h2>
+                </div>
+                <p>Choose a tab to test each step. Primary action: confirm the source before tailoring.</p>
+              </div>
+
+              <div class="demo-layout">
+                <aside class="demo-panel" aria-label="Job hub controls">
+                  <div class="chip success"><span class="material-symbols-outlined">bookmark_added</span>Saved job</div>
+                  <h3 style="margin-top: 12px;">Senior Product Designer</h3>
+                  <p class="muted">Acme Health - Berlin, Germany - Hybrid</p>
+                  <div class="stat-grid" style="grid-template-columns: 1fr;">
+                    <div class="stat">
+                      <span class="metric-label tiny faint">Source</span>
+                      <strong>LinkedIn reference</strong>
+                    </div>
+                    <div class="stat">
+                      <span class="metric-label tiny faint">Application</span>
+                      <strong>Lever confirmed</strong>
+                    </div>
+                    <div class="stat">
+                      <span class="metric-label tiny faint">Tracker</span>
+                      <strong>Preparing</strong>
+                    </div>
+                  </div>
+
+                  <div class="tabs" role="tablist" aria-label="Job detail demo sections" style="margin-top: 18px;">
+                    <p class="tiny faint" style="margin-bottom: 2px;">Choose a tab to test each step.</p>
+                    <button class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="tab-source" data-tab="source">
+                      <span class="material-symbols-outlined">travel_explore</span>Source Finder
+                    </button>
+                    <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-fit" data-tab="fit">
+                      <span class="material-symbols-outlined">radar</span>Fit Evaluation
+                    </button>
+                    <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-resume" data-tab="resume">
+                      <span class="material-symbols-outlined">auto_fix_high</span>Tailored Resume
+                    </button>
+                    <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-track" data-tab="track">
+                      <span class="material-symbols-outlined">send</span>Application Tracker
+                    </button>
+                  </div>
+                </aside>
+
+                <div class="demo-panel">
+                  <div class="job-header">
+                    <div>
+                      <div class="chip-row">
+                        <span class="chip success">91% extraction confidence</span>
+                        <span class="chip info">Career map ready</span>
+                        <span class="chip warning">Review salary fields</span>
+                      </div>
+                      <h3 style="margin-top: 12px;">Product design role focused on activation and care journeys</h3>
+                      <p class="muted">Downstream AI uses only saved job data, selected resume content, and confirmed career-map evidence.</p>
+                    </div>
+                    <button class="button secondary" type="button" data-prototype-action="Job details reviewed">
+                      <span class="material-symbols-outlined">visibility</span>Review Job Details
+                    </button>
+                  </div>
+
+                  <section id="tab-source" class="tab-pane is-active" role="tabpanel">
+                    <div class="source-result">
+                      <div>
+                        <div class="chip success"><span class="material-symbols-outlined">shield</span>High confidence</div>
+                        <h3 style="margin-top: 10px;">jobs.lever.co/acme-health/designer-4281</h3>
+                        <div class="reason-list">
+                          <span><span class="material-symbols-outlined">check</span>Company domain match</span>
+                          <span><span class="material-symbols-outlined">check</span>Exact role title</span>
+                          <span><span class="material-symbols-outlined">check</span>Known ATS structure</span>
+                        </div>
+                      </div>
+                      <div class="hero-actions" style="margin: 0;">
+                        <button class="button ghost" type="button" data-prototype-action="Opened application page">
+                          <span class="material-symbols-outlined">open_in_new</span>Open Application Page
+                        </button>
+                        <button class="button primary" type="button" data-prototype-action="Application page confirmed">
+                          Confirm Application Page
+                        </button>
+                      </div>
+                    </div>
+                    <div class="callout" style="margin-top: 14px;">
+                      <span class="material-symbols-outlined">info</span>
+                      <p><strong>User confirmation required.</strong> Confirming prevents the wrong URL from contaminating fit, tailoring, and tracker workflows.</p>
+                    </div>
+                  </section>
+
+                  <section id="tab-fit" class="tab-pane" role="tabpanel">
+                    <div class="two-col">
+                      <article class="compact-panel">
+                        <div class="chip info">Application ROI score</div>
+                        <div class="score"><strong>82</strong><span>/100</span></div>
+                        <p class="muted">Strong design systems and activation experience. Moderate gap on health-care compliance examples.</p>
+                      </article>
+                      <article class="compact-panel">
+                        <h3>Evidence-backed strengths</h3>
+                        <ul class="evidence-list" style="margin-top: 12px;">
+                          <li><span class="material-symbols-outlined" style="color: var(--success);">check_circle</span>Led dashboard redesign for blocked account journeys.</li>
+                          <li><span class="material-symbols-outlined" style="color: var(--success);">check_circle</span>Partnered with engineering and operations on activation flows.</li>
+                          <li><span class="material-symbols-outlined" style="color: var(--warning);">error</span>Needs stronger evidence for regulated workflow ownership.</li>
+                        </ul>
+                      </article>
+                    </div>
+                  </section>
+
+                  <section id="tab-resume" class="tab-pane" role="tabpanel">
+                    <div class="two-col">
+                      <div class="resume-preview" aria-label="Tailored resume preview">
+                        <h4>Alex Chen</h4>
+                        <p>Product designer focused on activation, service design, and operational clarity for complex customer journeys.</p>
+                        <ul>
+                          <li>Led redesign of a status-driven dashboard to clarify blocked account next steps across operations and support workflows.</li>
+                          <li>Partnered with engineering to translate ambiguous support cases into reusable product patterns.</li>
+                          <li>Improved onboarding clarity using qualitative research and funnel review. No unsupported metric added.</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="callout">
+                          <span class="material-symbols-outlined">warning</span>
+                          <p><strong>Truthfulness warning.</strong> The original resume did not include a quantified activation lift, so the tailored bullet stays qualitative.</p>
+                        </div>
+                        <div class="resume-line" style="margin-top: 12px;">
+                          <span class="chip info">Change log</span>
+                          <p class="muted" style="margin-top: 10px;">Moved dashboard redesign above brand-system work because the job emphasizes complex journey clarity.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section id="tab-track" class="tab-pane" role="tabpanel">
+                    <div class="timeline">
+                      <div class="timeline-row">
+                        <span class="step-dot">1</span>
+                        <div>
+                          <h3>Saved</h3>
+                          <p class="muted">Captured from LinkedIn reference mode. Save remained separate from opening the application page.</p>
+                        </div>
+                      </div>
+                      <div class="timeline-row">
+                        <span class="step-dot">2</span>
+                        <div>
+                          <h3>Preparing</h3>
+                          <p class="muted">Fit evaluated, resume tailored, form suggestions ready for review.</p>
+                        </div>
+                      </div>
+                      <div class="timeline-row">
+                        <span class="step-dot" style="background: var(--surface-high); color: var(--text-muted);">3</span>
+                        <div>
+                          <h3>Applied</h3>
+                          <p class="muted">Manual status update after the user submits on the company page.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <p id="hub-status" class="status-text" aria-live="polite"></p>
+                  <div class="section-cta">
+                    <a class="button primary" href="#extension">
+                      <span class="material-symbols-outlined">arrow_downward</span>
+                      Continue to Extension Demo
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="extension" class="section" aria-labelledby="extension-title">
+            <div class="container">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow"><span class="material-symbols-outlined">extension</span>Extension prototype</div>
+                  <h2 id="extension-title">Quick actions in the browser, review in the panel.</h2>
+                </div>
+                <p>Review suggestions before using them. The extension gathers visible context, but every action remains user-triggered.</p>
+              </div>
+
+              <div class="extension-layout">
+                <aside class="phone" aria-label="LinkedIn reference mode extension popup">
+                  <div class="phone-head">
+                    <div class="chip info"><span class="material-symbols-outlined">link</span>LinkedIn Reference Mode</div>
+                    <h3 style="margin-top: 10px;">Senior Product Designer</h3>
+                    <p class="muted">Acme Health - Berlin</p>
+                  </div>
+                  <div class="phone-body">
+                    <div class="callout">
+                      <span class="material-symbols-outlined">warning</span>
+                      <p><strong>Easy Apply is not automated.</strong> Copilot can help find the direct company career page instead.</p>
+                    </div>
+                    <button class="button primary" type="button" data-prototype-action="Job saved from extension">
+                      <span class="material-symbols-outlined">bookmark</span>Save Job
+                    </button>
+                    <button class="button secondary" type="button" data-prototype-action="Source Finder started">
+                      <span class="material-symbols-outlined">search</span>Find Company Career Page
+                    </button>
+                    <button class="button ghost" type="button" data-prototype-action="Fit evaluation queued">
+                      <span class="material-symbols-outlined">fact_check</span>Evaluate Fit
+                    </button>
+                  </div>
+                  <div class="phone-foot">
+                    <span class="material-symbols-outlined" style="font-size: 15px; vertical-align: -3px;">shield</span>
+                    Nothing is submitted automatically.
+                  </div>
+                </aside>
+
+                <div class="browser-mock" aria-label="Form suggestions side panel">
+                  <div style="padding: 36px; max-width: 480px;" aria-hidden="true">
+                    <div style="height: 32px; width: 56%; border-radius: 8px; background: var(--surface-high);"></div>
+                    <div style="height: 14px; width: 84%; border-radius: 8px; background: var(--surface-high); margin-top: 22px;"></div>
+                    <div style="height: 14px; width: 66%; border-radius: 8px; background: var(--surface-high); margin-top: 10px;"></div>
+                    <div style="display: grid; gap: 12px; margin-top: 38px;">
+                      <div style="height: 52px; border: 1px solid var(--border); border-radius: 8px; background: var(--subtle-fill);"></div>
+                      <div style="height: 52px; border: 1px solid var(--border); border-radius: 8px; background: var(--subtle-fill);"></div>
+                      <div style="height: 92px; border: 1px solid var(--border); border-radius: 8px; background: var(--subtle-fill);"></div>
+                    </div>
+                  </div>
+                  <aside class="form-panel">
+                    <header>
+                      <h3>Form Suggestions</h3>
+                      <p class="muted">5 visible fields detected. Review before using.</p>
+                    </header>
+                    <div class="form-list">
+                      <article class="suggestion-card">
+                        <div class="chip success">High match</div>
+                        <h3 style="margin-top: 10px;">First name</h3>
+                        <p class="muted">Suggested from profile: Alex</p>
+                        <div class="card-actions">
+                          <button class="button primary" type="button" data-prototype-action="First name suggestion approved"><span class="material-symbols-outlined">check</span>Approve Suggestion</button>
+                          <button class="button ghost" type="button"><span class="material-symbols-outlined">edit</span>Edit</button>
+                          <button class="button ghost" type="button" data-copy="Alex" aria-label="Copy suggested first name"><span class="material-symbols-outlined">content_copy</span>Copy</button>
+                        </div>
+                      </article>
+                      <article class="suggestion-card medium">
+                        <div class="chip warning">Sensitive field</div>
+                        <h3 style="margin-top: 10px;">Work authorization</h3>
+                        <p class="muted">Requires explicit approval every time. Copilot never infers legal declarations.</p>
+                        <div class="card-actions">
+                          <button class="button secondary" type="button" data-prototype-action="Sensitive field opened for review"><span class="material-symbols-outlined">visibility</span>Review Sensitive Field</button>
+                          <button class="button ghost" type="button"><span class="material-symbols-outlined">edit</span>Edit</button>
+                        </div>
+                      </article>
+                      <article class="suggestion-card blocked">
+                        <div class="chip danger">Default no-fill</div>
+                        <h3 style="margin-top: 10px;">Demographic question</h3>
+                        <p class="muted">No demographic inference. The user can answer directly on the application form.</p>
+                      </article>
+                    </div>
+                  </aside>
+                </div>
+              </div>
+              <p id="extension-status" class="status-text" aria-live="polite"></p>
+              <div class="section-cta">
+                <button class="button primary" type="button" data-prototype-action="Form suggestions reviewed">
+                  <span class="material-symbols-outlined">ads_click</span>
+                  Try Form Suggestions
+                </button>
+                <a class="button secondary feedback-link js-feedback-link" href="#feedback">
+                  <span class="material-symbols-outlined">forum</span>
+                  Leave Feedback
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section id="trust" class="section" aria-labelledby="trust-title">
+            <div class="container">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow"><span class="material-symbols-outlined">shield_lock</span>Trust by design</div>
+                  <h2 id="trust-title">Privacy, consent, and evidence are product infrastructure.</h2>
+                </div>
+                <p>Potential users should be able to understand what the copilot does, what it refuses to do, and how their career data remains under their control.</p>
+              </div>
+
+              <div class="trust-grid">
+                <article class="trust-card">
+                  <span class="material-symbols-outlined">fact_check</span>
+                  <h3>Consent-first AI</h3>
+                  <p>Resume parsing, fit evaluation, tailoring, and sensitive suggestions require clear consent before processing.</p>
+                </article>
+                <article class="trust-card">
+                  <span class="material-symbols-outlined">verified</span>
+                  <h3>Evidence-backed claims</h3>
+                  <p>Claims are tied to your evidence. Unsupported metrics become warnings, not inflated resume bullets.</p>
+                </article>
+                <article class="trust-card">
+                  <span class="material-symbols-outlined">pan_tool</span>
+                  <h3>Suggest-only forms</h3>
+                  <p>Suggestions stay under your control. No hidden fields, no auto-submit, no demographic inference.</p>
+                </article>
+                <article class="trust-card">
+                  <span class="material-symbols-outlined">delete</span>
+                  <h3>Export and delete</h3>
+                  <p>Users can inspect stored data, request export, revoke consent, and delete account data.</p>
+                </article>
+              </div>
+              <div class="section-cta">
+                <a class="button primary feedback-link js-feedback-link" href="#feedback">
+                  <span class="material-symbols-outlined">forum</span>
+                  Leave Feedback
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section id="feedback" class="section" aria-labelledby="feedback-title">
+            <div class="container">
+              <div class="feedback-stack">
+                <div class="feedback">
+                  <div>
+                    <div class="eyebrow"><span class="material-symbols-outlined">forum</span>Prototype feedback</div>
+                    <h2 id="feedback-title">Tell us what was clear, confusing, or missing.</h2>
+                    <p class="muted" style="margin-top: 10px;">Use Google Forms for real feedback. The small buttons below only update this static prototype for moderated sessions.</p>
+                    <p id="feedback-status" class="status-text" aria-live="polite"></p>
+                  </div>
+                  <div class="feedback-buttons">
+                    <a class="button primary feedback-link js-feedback-link" href="#feedback">
+                      <span class="material-symbols-outlined">open_in_new</span>Leave Feedback in Google Forms
+                    </a>
+                    <button class="button secondary" type="button" data-feedback="useful">
+                      <span class="material-symbols-outlined">thumb_up</span>Prototype was useful
+                    </button>
+                    <button class="button ghost" type="button" data-feedback="unclear">
+                      <span class="material-symbols-outlined">help</span>Something was unclear
+                    </button>
+                    <button class="button ghost" type="button" data-feedback="not-useful">
+                      <span class="material-symbols-outlined">thumb_down</span>Not useful yet
+                    </button>
+                  </div>
+                </div>
+
+                <div id="feedback-embed" class="feedback-embed" aria-label="Embedded Google Forms feedback area">
+                  <iframe
+                    id="google-form-frame"
+                    class="feedback-iframe"
+                    title="User Feedback Form"
+                    width="100%"
+                    height="2998"
+                    loading="lazy">
+                  </iframe>
+                  <div id="form-placeholder" class="form-placeholder">
+                    <div>
+                      <span class="material-symbols-outlined" style="font-size: 32px; color: var(--warning);">assignment_late</span>
+                      <strong>Feedback form not connected yet</strong>
+                      <p>Paste the real Google Forms URLs into <code>GOOGLE_FORM_URL</code> and <code>GOOGLE_FORM_EMBED_URL</code> in the script at the bottom of this file.</p>
+                    </div>
+                    <a class="button secondary feedback-link js-feedback-link" href="#feedback">
+                      <span class="material-symbols-outlined">open_in_new</span>Open Feedback Form
+                    </a>
+                  </div>
+                  <div style="padding: 14px 18px; border-top: 1px solid var(--border);">
+                    <a id="feedback-fallback-link" class="button ghost feedback-link js-feedback-link" href="#feedback">
+                      <span class="material-symbols-outlined">link</span>Fallback: Open Google Form in a New Tab
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <div class="container">
+            Static GitHub Pages prototype. No data is collected, submitted, or stored by this page.
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      /*
+        TODO: Paste real Google Forms URLs here before running an external user test.
+        GOOGLE_FORM_URL should be the public share URL, for example a docs.google.com/forms/d/e/.../viewform URL.
+        GOOGLE_FORM_EMBED_URL should be the iframe embed URL from Google Forms, usually ending in /viewform?embedded=true.
+        Leave both empty to keep the safe placeholder state.
+      */
+      const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScSLDmgiZ90tXW7mBdsKs_xLah7JHRZ7nNrr1qkuN6ZHORCjQ/viewform?usp=header";
+      const GOOGLE_FORM_EMBED_URL = "https://docs.google.com/forms/d/e/1FAIpQLScSLDmgiZ90tXW7mBdsKs_xLah7JHRZ7nNrr1qkuN6ZHORCjQ/viewform?embedded=true";
+
+      const tabButtons = document.querySelectorAll("[data-tab]");
+      const tabPanes = document.querySelectorAll(".tab-pane");
+      const hubStatus = document.querySelector("#hub-status");
+      const extensionStatus = document.querySelector("#extension-status");
+      const feedbackStatus = document.querySelector("#feedback-status");
+      const feedbackEmbed = document.querySelector("#feedback-embed");
+      const googleFormFrame = document.querySelector("#google-form-frame");
+      const feedbackSection = document.querySelector("#feedback");
+      const themeToggles = document.querySelectorAll(".js-theme-toggle");
+
+      const getCurrentTheme = () => document.documentElement.dataset.theme === "light" ? "light" : "dark";
+
+      const applyTheme = (theme, persist = true) => {
+        const nextTheme = theme === "light" ? "light" : "dark";
+        document.documentElement.dataset.theme = nextTheme;
+
+        themeToggles.forEach((toggle) => {
+          const label = toggle.querySelector(".theme-toggle-label");
+          const icon = toggle.querySelector(".material-symbols-outlined");
+          const lightModeActive = nextTheme === "light";
+
+          toggle.setAttribute("aria-pressed", String(lightModeActive));
+          toggle.setAttribute("aria-label", lightModeActive ? "Switch to dark mode" : "Switch to light mode");
+          if (label) label.textContent = lightModeActive ? "Dark Mode" : "Light Mode";
+          if (icon) icon.textContent = lightModeActive ? "dark_mode" : "light_mode";
+        });
+
+        if (persist) {
+          try {
+            localStorage.setItem("jobGenieTheme", nextTheme);
+          } catch (error) {
+            // Theme still works for the current session if storage is unavailable.
+          }
+        }
+      };
+
+      applyTheme(getCurrentTheme(), false);
+
+      themeToggles.forEach((toggle) => {
+        toggle.addEventListener("click", () => {
+          applyTheme(getCurrentTheme() === "light" ? "dark" : "light");
+        });
+      });
+
+      const showFeedbackPlaceholder = () => {
+        if (feedbackSection) {
+          feedbackSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        if (feedbackStatus) {
+          feedbackStatus.textContent = "Feedback form not connected yet. Replace GOOGLE_FORM_URL in index.html with the real Google Forms link.";
+        }
+      };
+
+      if (GOOGLE_FORM_URL) {
+        document.querySelectorAll(".js-feedback-link").forEach((link) => {
+          link.href = GOOGLE_FORM_URL;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+        });
+      } else {
+        document.querySelectorAll(".js-feedback-link").forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            showFeedbackPlaceholder();
+          });
+        });
+      }
+
+      if (GOOGLE_FORM_EMBED_URL && googleFormFrame && feedbackEmbed) {
+        googleFormFrame.src = GOOGLE_FORM_EMBED_URL;
+        feedbackEmbed.classList.add("has-form");
+      }
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = button.dataset.tab;
+
+          tabButtons.forEach((item) => item.setAttribute("aria-selected", "false"));
+          button.setAttribute("aria-selected", "true");
+
+          tabPanes.forEach((pane) => {
+            pane.classList.toggle("is-active", pane.id === `tab-${target}`);
+          });
+
+          if (hubStatus) {
+            hubStatus.textContent = `${button.textContent.trim()} panel selected.`;
+          }
+        });
+      });
+
+      document.querySelectorAll("[data-prototype-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const message = `${button.dataset.prototypeAction}. No backend request was made.`;
+          const inExtension = button.closest("#extension");
+          const output = inExtension ? extensionStatus : hubStatus;
+          if (output) output.textContent = message;
+        });
+      });
+
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const value = button.dataset.copy;
+          try {
+            if (navigator.clipboard) {
+              await navigator.clipboard.writeText(value);
+            }
+            button.setAttribute("aria-label", "Copied");
+            button.innerHTML = '<span class="material-symbols-outlined">done</span>';
+            if (extensionStatus) extensionStatus.textContent = "Copied suggestion to clipboard.";
+          } catch (error) {
+            if (extensionStatus) extensionStatus.textContent = `Copy this value manually: ${value}`;
+          }
+        });
+      });
+
+      document.querySelectorAll("[data-feedback]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const responses = {
+            useful: "Marked useful. Please use the Google Form button for detailed feedback.",
+            unclear: "Marked unclear. Please use the Google Form button to describe what was confusing.",
+            "not-useful": "Marked not useful yet. Please use the Google Form button to explain what is missing."
+          };
+          if (feedbackStatus) feedbackStatus.textContent = responses[button.dataset.feedback];
+        });
+      });
+    </script>
+  </body>
+</html>
