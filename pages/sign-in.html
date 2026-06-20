@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign In - Job Search Copilot</title>
+    <script>try{document.documentElement.dataset.theme=localStorage.getItem("jobGenieTheme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600&amp;family=Newsreader:wght@500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/prototype.css" />
+  </head>
+  <body data-page="sign-in">
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Prototype navigation">
+        <div class="brand"><div class="brand-mark"><span class="material-symbols-outlined filled">work</span></div><div><span class="brand-title">Job Search Copilot</span><span class="brand-subtitle">Precision career assistant</span></div></div>
+        <nav class="nav">
+          <a class="nav-link" data-nav="overview" href="../index.html"><span class="material-symbols-outlined">home</span>Overview</a>
+          <a class="nav-link" data-nav="sign-in" href="sign-in.html"><span class="material-symbols-outlined">login</span>Sign In</a>
+          <a class="nav-link" data-nav="onboarding" href="onboarding.html"><span class="material-symbols-outlined">dashboard</span>Onboarding</a>
+          <a class="nav-link" data-nav="career-map" href="career-map.html"><span class="material-symbols-outlined">map</span>Career Map</a>
+          <a class="nav-link" data-nav="jobs" href="jobs.html"><span class="material-symbols-outlined">bookmark</span>Jobs</a>
+          <a class="nav-link" data-nav="job-detail" href="job-detail.html"><span class="material-symbols-outlined">hub</span>Job Hub</a>
+          <a class="nav-link" data-nav="source-finder" href="source-finder.html"><span class="material-symbols-outlined">travel_explore</span>Source Finder</a>
+          <a class="nav-link" data-nav="fit-evaluation" href="fit-evaluation.html"><span class="material-symbols-outlined">fact_check</span>Fit Evaluation</a>
+          <a class="nav-link" data-nav="resume-tailoring" href="resume-tailoring.html"><span class="material-symbols-outlined">auto_fix_high</span>Resume Tailoring</a>
+          <a class="nav-link" data-nav="extension" href="extension.html"><span class="material-symbols-outlined">extension</span>Extension</a>
+          <a class="nav-link" data-nav="applications" href="applications.html"><span class="material-symbols-outlined">send</span>Applications</a>
+          <a class="nav-link" data-nav="privacy" href="privacy.html"><span class="material-symbols-outlined">shield_lock</span>Privacy</a>
+        </nav>
+        <div class="sidebar-footer"><button class="button ghost js-theme-toggle" type="button"><span class="material-symbols-outlined">light_mode</span><span class="theme-toggle-label">Light Mode</span></button><a class="button secondary js-feedback-link" href="#"><span class="material-symbols-outlined">forum</span>Leave Feedback</a></div>
+      </aside>
+      <div class="main">
+        <header class="topbar"><a class="mobile-brand" href="../index.html"><span class="material-symbols-outlined filled">work</span>Copilot</a><div class="topbar-actions"><a class="button ghost" href="../index.html">Back to Overview</a><button class="button ghost js-theme-toggle" type="button"><span class="material-symbols-outlined">light_mode</span><span class="theme-toggle-label">Light Mode</span></button><a class="button secondary js-feedback-link" href="#">Leave Feedback</a></div></header>
+        <main class="page"><div class="container">
+          <section class="page-hero">
+            <div class="breadcrumb">Overview / Sign In</div>
+            <div class="eyebrow"><span class="material-symbols-outlined">lock</span>Account entry</div>
+            <h1>Secure entry before career data is stored.</h1>
+            <p class="lead">This page tests whether users understand the product value and the privacy posture before creating an account.</p>
+            <div class="actions"><a class="button primary" href="onboarding.html">Continue to Onboarding</a><a class="button secondary js-feedback-link" href="#">Leave Feedback</a></div>
+          </section>
+          <section class="layout">
+            <article class="card">
+              <h2>Create account</h2>
+              <p class="muted" style="margin-top:10px">Use this static form to evaluate layout and trust copy. It does not submit data.</p>
+              <div class="grid" style="margin-top:18px">
+                <label class="label">Email<input style="width:100%;margin-top:6px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)" value="alex@example.com" /></label>
+                <label class="label">Password<input type="password" style="width:100%;margin-top:6px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)" value="password" /></label>
+                <button class="button primary" type="button" data-status="Account creation reviewed">Create Account</button>
+                <p id="page-status" class="muted" aria-live="polite"></p>
+              </div>
+            </article>
+            <aside class="grid">
+              <article class="card"><span class="chip info">Career Map</span><h3 style="margin-top:12px">Your resume is only an input.</h3><p class="muted">The structured career map becomes the source of truth for fit, tailoring, and suggestions.</p></article>
+              <article class="card"><span class="chip success">User controlled</span><h3 style="margin-top:12px">Nothing applies for you.</h3><p class="muted">The prototype should reassure users that all application actions are reviewed manually.</p></article>
+            </aside>
+          </section>
+        </div></main>
+        <footer class="footer"><div class="container">Static prototype page. No account data is collected.</div></footer>
+      </div>
+    </div>
+    <script src="../assets/prototype.js"></script>
+  </body>
+</html>
